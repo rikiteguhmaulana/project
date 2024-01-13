@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css">
+    <title>Ur Dream Garden's</title>
+  </head>
+  <body>
+    <h1>Ur Dream Garden's</h1>
+
+
+    <div class="wrapper">
+      <label for="fileSelect">Pilih Tanaman:</label>
+      <select id="fileSelect" onchange="displayFileDetails()">
+        <option value="" disabled selected>Klik di sini</option>
+      </select>
+      <div class="card">
+        <div id="selectedFileName"></div>
+        <img id="selectedImage" alt="Selected Image" />
+        <div class="button">
+          <button class="buttonclik" id="displayInfoButton" style="display: none" onclick="displayFileInfo()">Jenis Tanaman</button>
+          <button class="buttonclik" id="displayInfoButton2" style="display: none" onclick="informasi()">Perawatan Tanaman</button>
+          <button class="buttonclik" id="displayInfoButton3" style="display: none" onclick="bakteri()">Bakteri dan Hama</button>
+          <button class="buttonclik" id="displayInfoButton4" style="display: none" onclick="fakta()">Fakta Unik Tanaman</button>
+        </div>
+        <div id="fileInfo"></div>
+      </div>
+    </div>
+
+    <script>
+      // Load data from file.json (assuming it's in the same directory)
+      fetch("file.json")
+        .then((response) => response.json())
+        .then((data) => {
+          jsonData = data;
+          updateFileOptions();
+        })
+        .catch((error) => console.error("Error loading JSON:", error));
+
+      let jsonData = [];
+
+      function updateFileOptions() {
+
+
+        jsonData.forEach((file) => {
+          const option = document.createElement("option");
+          option.value = file.id;
+          option.textContent = file.filename;
+          fileSelect.appendChild(option);
+        });
+      }
+
+      function displayFileDetails() {
+        const fileSelect = document.getElementById("fileSelect");
+        const selectedFileName = document.getElementById("selectedFileName");
+        const selectedImage = document.getElementById("selectedImage");
+        const displayInfoButton = document.getElementById("displayInfoButton");
+        const displayInfoButton2 = document.getElementById("displayInfoButton2");
+        const displayInfoButton3 = document.getElementById("displayInfoButton3");
+        const displayInfoButton4 = document.getElementById("displayInfoButton4");
+        const fileInfo = document.getElementById("fileInfo");
+
+        const selectedFileId = fileSelect.value;
+        const selectedFile = jsonData.find((file) => file.id === selectedFileId);
+
+        if (selectedFile) {
+      
+          selectedImage.src = selectedFile.imageUrl;
+          selectedImage.style.display = "block";
+          displayInfoButton.style.display = "block";
+          displayInfoButton2.style.display = "block";
+          displayInfoButton3.style.display = "block";
+          displayInfoButton4.style.display = "block";
+        } else {
+          selectedFileName.textContent = "";
+          selectedImage.src = "";
+          selectedImage.style.display = "none";
+          displayInfoButton.style.display = "none";
+          fileInfo.textContent = "";
+        }
+      }
+
+      function displayFileInfo() {
+        const fileSelect = document.getElementById("fileSelect");
+        const selectedFileId = fileSelect.value;
+        const fileInfo = document.getElementById("fileInfo");
+
+        const selectedFile = jsonData.find((file) => file.id === selectedFileId);
+        if (selectedFile) {
+          fileInfo.textContent = `Jenis Tanaman: ${selectedFile.data}`;
+        } else {
+          fileInfo.textContent = "";
+        }
+      }
+
+      function informasi(){
+        const selectedFileId = fileSelect.value;
+        const selectedFile = jsonData.find((file) => file.id === selectedFileId);
+        fileInfo.innerHTML = `Perawatan Tanaman : ${selectedFile.perawatan_tanaman}<br> <br>${selectedFile.perawatan_tanaman1}<br> <br>${selectedFile.perawatan_tanaman2}<br> <br>${selectedFile.perawatan_tanaman3}<br> <br>${selectedFile.perawatan_tanaman4}`;
+
+      }
+      function bakteri(){
+          const selectedFileId = fileSelect.value;
+          const selectedFile = jsonData.find((file) => file.id === selectedFileId);
+          fileInfo.innerHTML = `Bakteri dan Hama : ${selectedFile.bakteri_hama}<br> <br>${selectedFile.bakteri_hama1}<br> <br>${selectedFile.bakteri_hama2}<br> <br>${selectedFile.bakteri_hama3}`; 
+      } 
+         
+      function fakta(){
+            const selectedFileId = fileSelect.value;
+            const selectedFile = jsonData.find((file) => file.id === selectedFileId);
+            fileInfo.innerHTML = `Fakta Unik Tanaman : ${selectedFile.fakta_unik}<br>  <br>${selectedFile.fakta_unik1}<br>  <br>${selectedFile.fakta_unik2}<br>  <br>${selectedFile.fakta_unik3}`;   
+      }
+    </script>
+  </body>
+</html>

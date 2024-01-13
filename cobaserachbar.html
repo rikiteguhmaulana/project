@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dream Garden</title>
+    <style>
+        /* CSS Styles (sama seperti sebelumnya) */
+        #searchResults {
+            margin-top: 10px;
+            max-width: 400px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .searchResultItem {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .searchResultItem:hover {
+            background-color: #f0f0f0;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .container-fluid {
+            width: 20%;
+            margin: 10px;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .img-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(39, 174, 96, 0.7);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .img-container:hover .img-overlay {
+            opacity: 1;
+        }
+
+        .feature {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .details-link {
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Optional: Add hover effect for "Lihat Detail" link */
+        .details-link:hover {
+            text-decoration: underline;
+            color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Dream Garden's</h1>
+    <nav class="navbar">
+        <div class="container">
+            <form class="d-flex" role="search">
+                <input id="searchInput" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" oninput="searchData()">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+            <div id="searchResults"></div>
+        </div>
+    </nav>
+    <div class="container">
+        <div id="image-container" class="image-container"></div>
+    </div>
+
+    <script>
+        let jsonData = []; // Variable untuk menyimpan data JSON
+
+        function fetchData() {
+            fetch("file.json") // Ganti dengan nama file JSON sesuai kebutuhan
+                .then(response => response.json())
+                .then(data => {
+                    jsonData = data;
+                    renderData(jsonData);
+                })
+                .catch(error => console.error("Error loading JSON:", error));
+        }
+
+        function renderData(data) {
+            var imageContainer = document.getElementById("image-container");
+            imageContainer.innerHTML = "";
+
+            for (var i = 0; i < data.length; i++) {
+                var containerFluid = document.createElement("div");
+                containerFluid.className = "container-fluid";
+
+                var imgContainer = document.createElement("div");
+                imgContainer.className = "img-container";
+
+                var img = document.createElement("img");
+                img.src = data[i].imageUrl;
+                img.alt = data[i].filename;
+
+                var imgOverlay = document.createElement("div");
+                imgOverlay.className = "img-overlay";
+
+                var feature = document.createElement("div");
+                feature.className = "feature";
+
+                var p = document.createElement("p");
+                p.textContent = data[i].filename;
+
+                var detailsLink = document.createElement("a");
+                detailsLink.href = "details.html"; // Ganti dengan link yang sesuai
+                detailsLink.className = "details-link";
+                detailsLink.textContent = "Lihat Detail";
+
+                // Menambahkan elemen ke dalam struktur HTML
+                feature.appendChild(p);
+                feature.appendChild(detailsLink);
+
+                imgOverlay.appendChild(feature);
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(imgOverlay);
+
+                containerFluid.appendChild(imgContainer);
+                imageContainer.appendChild(containerFluid);
+            }
+        }
+
+        function searchData() {
+            var searchInput = document.getElementById("searchInput").value.toLowerCase();
+            var filteredData = jsonData.filter(item => item.filename.toLowerCase().includes(searchInput) || item.data.toLowerCase().includes(searchInput));
+            renderData(filteredData);
+
+            // Tampilkan kata kunci filename yang dicari
+            console.log("Kata Kunci Pencarian:", searchInput);
+
+            // Tampilkan rekomendasi filename sesuai dengan kata kunci
+            showSearchResults(filteredData.map(item => item.filename));
+        }
+
+        function showSearchResults(results) {
+            var searchResultsContainer = document.getElementById("searchResults");
+            searchResultsContainer.innerHTML = "";
+
+            if (results.length > 0) {
+                results.forEach(result => {
+                    var searchResultItem = document.createElement("div");
+                    searchResultItem.className = "searchResultItem";
+                    searchResultItem.textContent = result;
+                    searchResultItem.onclick = function() {
+                        // Set nilai searchInput saat salah satu rekomendasi diklik
+                        document.getElementById("searchInput").value = result;
+                        searchResultsContainer.style.display = "none";
+                    };
+
+                    searchResultsContainer.appendChild(searchResultItem);
+                });
+
+                searchResultsContainer.style.display = "block";
+            } else {
+                searchResultsContainer.style.display = "none";
+            }
+        }
+
+        // Panggil fetchData() saat halaman dimuat
+        fetchData();
+    </script>
+</body>
+</html>

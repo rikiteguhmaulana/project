@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dream Garden</title>
+    <style>
+        body {
+            font-family: 'Luminari', fantasi;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .logo {
+            width: 70px; /* Sesuaikan lebar logo sesuai kebutuhan */
+            height: auto; /* Untuk menjaga proporsi aspek */
+            margin-right: 3px; /* Memberi jarak antara logo dan teks */
+            vertical-align: middle;
+        }
+
+        h1 {
+            text-align: center;
+            color: #3498db;
+            margin: 20px 0;
+        }
+
+        .navbar {
+            background-color: #27ae60;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image-container {
+            display: flex;
+           flex-basis: 50%;
+           flex-wrap: wrap;
+           justify-content: space-evenly;
+            width: 100%;
+            
+        }
+
+        .container-fluid {
+            width: 20%;
+            margin: 10px;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+        }
+
+        input {
+            padding: 8px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #2ecc71;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .img-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(39, 174, 96, 0.7);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .img-container:hover .img-overlay {
+            opacity: 1;
+        }
+
+        .feature {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .details-link {
+            display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #00c514; /* Warna latar belakang tombol */
+  border: 2px solid #00c514; /* Warna border tombol */
+  border-radius: 5px; /* Border radius untuk tampilan yang lebih lembut */
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  text-decoration: none; 
+        }
+
+        /* Optional: Add hover effect for "Lihat Detail" link */
+        .details-link:hover {
+            text-decoration: none;
+            background-color: #00960a;
+            cursor: pointer;
+        }
+
+        .img-container{
+            text-align: center;
+        }
+        p{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1> <img class="logo" src="logo.png" alt="Your Logo">
+        Ur Dream Garden's</h1>
+    <nav class="navbar">
+        <div class="container">
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" oninput="searchData()" id="searchInput">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+            <!-- <div id="searchResults"></div> -->
+        </div>
+    </nav>
+    <div class="container">
+            <div id="image-container" class="image-container"></div>
+        
+</div>
+<script>
+    let jsonData = []; // Variable untuk menyimpan data JSON
+
+    function fetchData() {
+        fetch("file.json") // Ganti dengan nama file JSON sesuai kebutuhan
+            .then(response => response.json())
+            .then(data => {
+                jsonData = data;
+                renderData(jsonData);
+            })
+            .catch(error => console.error("Error loading JSON:", error));
+    }
+
+    function renderData(data) {
+        var imageContainer = document.getElementById("image-container");
+        imageContainer.innerHTML = "";
+
+        for (var i = 0; i < data.length; i++) {
+            var containerFluid = document.createElement("div");
+            containerFluid.className = "container-fluid";
+
+            var imgContainer = document.createElement("div");
+            imgContainer.className = "img-container";
+
+            var img = document.createElement("img");
+            img.src = data[i].imageUrl;
+            img.alt = data[i].filename;
+
+            var imgOverlay = document.createElement("div");
+            imgOverlay.className = "img-overlay";
+
+            var feature = document.createElement("div");
+            feature.className = "feature";
+
+            var p = document.createElement("p");
+            p.textContent = data[i].filename;
+
+            var detailsLink = document.createElement("a");
+            detailsLink.href = "index.html"; // Ganti dengan link yang sesuai
+            detailsLink.className = "details-link";
+            detailsLink.textContent = "Klik disini";
+
+            // Menambahkan elemen ke dalam struktur HTML
+            // feature.appendChild(p);
+            // feature.appendChild(detailsLink);
+
+            imgContainer.appendChild(img);
+            imgContainer.appendChild(p)
+            imgContainer.appendChild(detailsLink)
+
+
+            containerFluid.appendChild(imgContainer);
+            imageContainer.appendChild(containerFluid);
+        }
+    }
+
+    function searchData() {
+        var searchInput = document.getElementById("searchInput").value.toLowerCase();
+        var filteredData = jsonData.filter(item => item.filename.toLowerCase().includes(searchInput) || item.data.toLowerCase().includes(searchInput));
+        renderData(filteredData);
+
+        // Tampilkan kata kunci filename yang dicari
+        console.log("Kata Kunci Pencarian:", searchInput);
+
+        // Tampilkan rekomendasi filename sesuai dengan kata kunci
+        showSearchResults(filteredData.map(item => item.filename));
+    }
+
+    function showSearchResults(results) {
+        var searchResultsContainer = document.getElementById("searchResults");
+        searchResultsContainer.innerHTML = "";
+
+        if (results.length > 0) {
+            results.forEach(result => {
+                var searchResultItem = document.createElement("div");
+                searchResultItem.className = "searchResultItem";
+                searchResultItem.textContent = result;
+                searchResultItem.onclick = function() {
+                    // Set nilai searchInput saat salah satu rekomendasi diklik
+                    document.getElementById("searchInput").value = result;
+                    searchResultsContainer.style.display = "none";
+                };
+
+                searchResultsContainer.appendChild(searchResultItem);
+            });
+
+            searchResultsContainer.style.display = "block";
+        } else {
+            searchResultsContainer.style.display = "none";
+        }
+    }
+
+    // Panggil fetchData() saat halaman dimuat
+    fetchData();
+</script>
+
+
+
